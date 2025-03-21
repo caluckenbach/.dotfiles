@@ -1,5 +1,4 @@
-[cmd_duration]
-disabled = true
+command_timeout = 1000
 
 [memory_usage]
 disabled = false
