@@ -1,18 +1,16 @@
 # List Options: ghostty +show-config --default --docs
 # List Themes: ghostty +list-themes
-font-family = Berkeley Mono
+font-family = TX-02
 font-thicken = true
 font-size = 15
 
-title = LOCK TF IN!!!
+theme = GruvboxDark
 
-theme = zenwritten_dark
-#theme = zenwritten_light
+mouse-hide-while-typing = true
+mouse-scroll-multiplier = 2
 
 window-height = 48
 window-width  = 140 
-
-mouse-hide-while-typing = true
 
 # Keybinds
 keybind = super+shift+r=reload_config
