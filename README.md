@@ -12,6 +12,7 @@
 - [tmux](https://github.com/tmux/tmux)
 - [yabai](https://github.com/koekeishiya/yabai)
 - zsh
+- [aerospace](https://github.com/nikitabobko/AeroSpace)
 
 ## GNU Stow
 
