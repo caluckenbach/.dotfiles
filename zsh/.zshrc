@@ -1,128 +1,89 @@
-# If you come from bash you might have to change your $PATH.
-# export PATH=$HOME/bin:/usr/local/bin:$PATH
-
-# Path to your oh-my-zsh installation.
+# Oh My Zsh configuration
 export ZSH="$HOME/.oh-my-zsh"
-
-# Set name of the theme to load --- if set to "random", it will
-# load a random theme each time oh-my-zsh is loaded, in which case,
-# to know which specific one was loaded, run: echo $RANDOM_THEME
-# See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
 ZSH_THEME="robbyrussell"
-
-# Set list of themes to pick from when loading at random
-# Setting this variable when ZSH_THEME=random will cause zsh to load
-# a theme from this variable instead of looking in $ZSH/themes/
-# If set to an empty array, this variable will have no effect.
-# ZSH_THEME_RANDOM_CANDIDATES=( "robbyrussell" "agnoster" )
-
-# Uncomment the following line to use case-sensitive completion.
-# CASE_SENSITIVE="true"
-
-# Uncomment the following line to use hyphen-insensitive completion.
-# Case-sensitive completion must be off. _ and - will be interchangeable.
-# HYPHEN_INSENSITIVE="true"
-
-# Uncomment one of the following lines to change the auto-update behavior
-# zstyle ':omz:update' mode disabled  # disable automatic updates
-# zstyle ':omz:update' mode auto      # update automatically without asking
-# zstyle ':omz:update' mode reminder  # just remind me to update when it's time
-
-# Uncomment the following line to display red dots whilst waiting for completion.
-# You can also set it to another string to have that shown instead of the default red dots.
-# e.g. COMPLETION_WAITING_DOTS="%F{yellow}waiting...%f"
-# Caution: this setting can cause issues with multiline prompts in zsh < 5.7.1 (see #5765)
-# COMPLETION_WAITING_DOTS="true"
-
-# Uncomment the following line if you want to disable marking untracked files
-# under VCS as dirty. This makes repository status check for large repositories
-# much, much faster.
-# DISABLE_UNTRACKED_FILES_DIRTY="true"
-
-# Uncomment the following line if you want to change the command execution time
-# stamp shown in the history command output.
-# You can set one of the optional three formats:
-# "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
-# or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.
-# HIST_STAMPS="mm/dd/yyyy"
-
-# Standard plugins can be found in $ZSH/plugins/
-# Custom plugins may be added to $ZSH_CUSTOM/plugins/
 plugins=(git tmux zoxide poetry kubectl)
-
 source $ZSH/oh-my-zsh.sh
-#fpath+=${ZSH_CUSTOM:-${ZSH:-~/.oh-my-zsh}/custom}/plugins/zsh-completions/src
 
-# User configuration
+# Environment variables
 export LANG=en_US.UTF-8
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=1
 
-# Set n install path - https://github.com/tj/n
+# Tool configuration and PATH management
 export N_PREFIX="$HOME/.n"
-export PATH="$N_PREFIX/bin:$PATH"
-
-# Preferred editor for local and remote sessions
- if [[ -n $SSH_CONNECTION ]]; then
-   export EDITOR='nvim'
- else
-   export EDITOR='nvim'
- fi
-
-# pnpm
-export PNPM_HOME="/Users/cal/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
-
-# pyenv
+export PNPM_HOME="$HOME/Library/pnpm"
 export PYENV_ROOT="$HOME/.pyenv"
-command -v pyenv >/dev/null || export PATH="$PYENV_ROOT/bin:$PATH"
-eval "$(pyenv init -)"
-# pyenv end
-
-# poetry
-export PATH="$HOME/.local/bin:$PATH"
-# poetry end
-
-# bun
-# completions
-# [ -s "/Users/cal/.bun/_bun" ] && source "/Users/cal/.bun/_bun"
-
 export BUN_INSTALL="$HOME/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-# bun end
-
-# llvm
-export PATH="/opt/homebrew/opt/llvm/bin:$PATH"
-# llvm end
-
-# go 
 export GOPATH="$HOME/go"
-export PATH="$GOPATH/bin:$PATH"
-# go end
-
-# zig
+export GOROOT="$(brew --prefix golang)/libexec"
 export ZIGPATH="$HOME/Code/zig/build/stage3"
-export PATH="$ZIGPATH/bin:$PATH"
-# zig end
+
+path=(
+    "$N_PREFIX/bin"
+    "$PNPM_HOME"
+    "$PYENV_ROOT/bin"
+    "$HOME/.local/bin"
+    "$BUN_INSTALL/bin"
+    "/opt/homebrew/opt/llvm/bin"
+    "$GOPATH/bin"
+    "$ZIGPATH/bin"
+    $path
+)
+export PATH
+
+# Tool initialization
+command -v pyenv >/dev/null && eval "$(pyenv init -)"
+
+# Editor configuration
+if [[ -n $SSH_CONNECTION ]]; then
+    export EDITOR='vi'
+else
+    export EDITOR='nvim'
+fi
+
+# ghcup
+[ -f "/Users/cal/.ghcup/env" ] && . "/Users/cal/.ghcup/env"
+# end ghcupt
 
 
-# Compilation flags
-# export ARCHFLAGS="-arch x86_64"
+# fabric
+if [ -d "$HOME/.config/fabric/patterns" ]; then
+    for pattern_file in "$HOME/.config/fabric/patterns"/*; do
+        pattern_name=$(basename "$pattern_file")
+        alias "$pattern_name"="fabric --pattern $pattern_name"
+    done
+fi
 
-# Aliases
-alias -g ls="eza -F --group-directories-first --color=always --icons"
-alias -g la="eza -alF --group-directories-first --color=always --icons"
-alias -g ll="eza -lF --group-directories-first"
-alias -g lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
-alias -g ldot='eza -a | egrep "^\."'
-alias -g cat="bat"
-alias -g grep="rg"
+yt() {
+    local video_link="$1"
+    fabric -y "$video_link" --transcript
+}
+# fabric end
 
+# ngrok
+if command -v ngrok &>/dev/null; then
+    eval "$(ngrok completion)"
+  fi
+# ngrok end
+
+# uv
+command -v uv >/dev/null && eval "$(uv generate-shell-completion zsh)"
+command -v uvx >/dev/null && eval "$(uvx --generate-shell-completion zsh)"
+# uv end
+
+# File operation aliases
+alias ls="eza -F --group-directories-first --color=always --icons"
+alias la="eza -alF --group-directories-first --color=always --icons"
+alias ll="eza -lF --group-directories-first"
+alias lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
+alias ldot='eza -a | egrep "^\."'
+alias cat="bat"
+alias grep="rg"
+alias cp="cp -i"
+alias mv="mv -i"
+alias rm="rm -i"
+
+# Git aliases
 alias g="git"
 alias gp="git push"
 alias gpf="git push --force"
@@ -135,22 +96,18 @@ alias gsc="git switch -c"
 alias gco="git checkout"
 alias grb="git rebase"
 alias gcan="git commit --amend --no-edit"
-# This does not work properly...
-alias gprn="git fetch --all --prune && git branch -v | awk '/\[gone\]/ {print $1}' | xargs git branch -D"
+alias gprn="{ git fetch --all --prune && git branch -v | awk '/\[gone\]/ {print \$1}' | while read branch; do git branch -D \"\$branch\"; done; }"
 
+# Tool shortcuts
 alias lg="lazygit"
 alias lzd="lazydocker"
-
 alias pn="pnpm"
 
-alias cp="cp -i"
-alias mv="mv -i"
-alias rm="rm -i"
-
-alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_sun.lua"
-
+# Configuration shortcuts
 alias zshcfg="nvim ~/.zshrc"
 alias vimcfg="nvim ~/.config/nvim/"
 alias gstcfg="nvim .config/ghostty/config"
+alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_sun.lua"
 
 eval "$(starship init zsh)"
+
