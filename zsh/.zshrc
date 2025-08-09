@@ -45,7 +45,6 @@ fi
 [ -f "/Users/cal/.ghcup/env" ] && . "/Users/cal/.ghcup/env"
 # end ghcupt
 
-
 # fabric
 if [ -d "$HOME/.config/fabric/patterns" ]; then
     for pattern_file in "$HOME/.config/fabric/patterns"/*; do
@@ -69,14 +68,35 @@ if command -v ngrok &>/dev/null; then
 # uv
 command -v uv >/dev/null && eval "$(uv generate-shell-completion zsh)"
 command -v uvx >/dev/null && eval "$(uvx --generate-shell-completion zsh)"
+
+# Fix completions for uv run to autocomplete .py files
+_uv_run_mod() {
+    if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
+        _arguments '*:filename:_files -g "*.py"'
+    else
+        _uv "$@"
+    fi
+}
+compdef _uv_run_mod uv
 # uv end
 
+# yazi
+function y() {
+	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+	yazi "$@" --cwd-file="$tmp"
+	IFS= read -r -d '' cwd < "$tmp"
+	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+	rm -f -- "$tmp"
+}
+# yazi end
+
+
 # File operation aliases
-alias ls="eza -F --group-directories-first --color=always --icons"
-alias la="eza -alF --group-directories-first --color=always --icons"
-alias ll="eza -lF --group-directories-first"
-alias lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
-alias ldot='eza -a | egrep "^\."'
+ls="eza -F --group-directories-first --color=always --icons"
+la="eza -alF --group-directories-first --color=always --icons"
+ll="eza -lF --group-directories-first"
+lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
+ldot='eza -a | egrep "^\."'
 alias cat="bat"
 alias grep="rg"
 alias cp="cp -i"
@@ -108,6 +128,9 @@ alias zshcfg="nvim ~/.zshrc"
 alias vimcfg="nvim ~/.config/nvim/"
 alias gstcfg="nvim .config/ghostty/config"
 alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_sun.lua"
+
+# Daily log shortcut
+alias dl="nvim ~/Documents/log/log_$(date +%Y_%m_%d).txt"
 
 eval "$(starship init zsh)"
 
