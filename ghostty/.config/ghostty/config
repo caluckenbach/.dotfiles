@@ -14,3 +14,4 @@ window-width  = 140
 
 # Keybinds
 keybind = super+shift+r=reload_config
+keybind = shift+enter=text:\n
