@@ -92,11 +92,11 @@ function y() {
 
 
 # File operation aliases
-ls="eza -F --group-directories-first --color=always --icons"
-la="eza -alF --group-directories-first --color=always --icons"
-ll="eza -lF --group-directories-first"
-lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
-ldot='eza -a | egrep "^\."'
+alias ls="eza -F --group-directories-first --color=always --icons"
+alias la="eza -alF --group-directories-first --color=always --icons"
+alias ll="eza -lF --group-directories-first"
+alias lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
+alias ldot='eza -a | rg "^\."'
 alias cat="bat"
 alias grep="rg"
 alias cp="cp -i"
