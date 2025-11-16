@@ -9,6 +9,11 @@ export LANG=en_US.UTF-8
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=1
 
+# Load private environment variables
+if [[ -f "$HOME/.zshrc.local" ]]; then
+    source "$HOME/.zshrc.local"
+fi
+
 # Tool configuration and PATH management
 export N_PREFIX="$HOME/.n"
 export PNPM_HOME="$HOME/Library/pnpm"
@@ -117,6 +122,8 @@ alias gco="git checkout"
 alias grb="git rebase"
 alias gcan="git commit --amend --no-edit"
 alias gprn="{ git fetch --all --prune && git branch -v | awk '/\[gone\]/ {print \$1}' | while read branch; do git branch -D \"\$branch\"; done; }"
+alias gsh="git show --ext-diff"
+alias gl="git log -p --ext-diff"
 
 # Tool shortcuts
 alias lg="lazygit"
@@ -131,6 +138,16 @@ alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_s
 
 # Daily log shortcut
 alias dl="nvim ~/Documents/log/log_$(date +%Y_%m_%d).txt"
+
+
+# Coding agents
+cckimi() {
+    export ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic
+    export ANTHROPIC_AUTH_TOKEN=${MOONSHOT_API_KEY}
+    export ANTHROPIC_MODEL=kimi-k2-thinking
+    export ANTHROPIC_SMALL_FAST_MODEL=kimi-k2-turbo-preview
+    claude
+}
 
 eval "$(starship init zsh)"
 
