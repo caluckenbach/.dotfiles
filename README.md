@@ -1,18 +1,19 @@
 # My .'s live here 🏡
 
+- [aerospace](https://github.com/nikitabobko/AeroSpace)
 - [alacritty](https://github.com/alacritty/alacritty)
 - `/bin`: tmux plugins
 - [fish](https://github.com/fish-shell/fish-shell)
+- [ghostty](http://ghostty.org)
+- [jj](https://jj-vcs.github.io/jj/latest/)
 - [kitty](https://github.com/kovidgoyal/kitty)
 - [nvim](https://github.com/neovim/neovim)
-    * current
-    * `nvim.bak` - old packer config
 - [shkd](https://github.com/koekeishiya/skhd)
 - [starship](https://github.com/starship/starship)
 - [tmux](https://github.com/tmux/tmux)
 - [yabai](https://github.com/koekeishiya/yabai)
+- [zed](http://zed.dev/)
 - zsh
-- [aerospace](https://github.com/nikitabobko/AeroSpace)
 
 ## GNU Stow
 
@@ -34,5 +35,4 @@ You can also apply or delete all configurations using the makefile
 
 ## Todo
 
-- [ ] create a minimal nvim config
 - [ ] fix `tmux-cht.sh` keybind
