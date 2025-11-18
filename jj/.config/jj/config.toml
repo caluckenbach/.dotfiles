@@ -5,4 +5,5 @@ name = "Constantin Luckenbach"
 email = "cluckenbach@protonmail.com"
 
 [ui]
+editor = "nvim"
 diff-formatter = ["difft", "--color=always", "$left", "$right"]
