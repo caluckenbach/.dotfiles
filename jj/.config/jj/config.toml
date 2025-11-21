@@ -7,3 +7,4 @@ email = "cluckenbach@protonmail.com"
 [ui]
 editor = "nvim"
 diff-formatter = ["difft", "--color=always", "$left", "$right"]
+diff-editor = ":builtin"
