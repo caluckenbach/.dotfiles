@@ -14,34 +14,35 @@ setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY HIST_REDUCE_BLANKS
 
 # Environment
 export LANG=en_US.UTF-8
-export HOMEBREW_NO_ANALYTICS=1
-export HOMEBREW_NO_ENV_HINTS=1
+
+if [[ -d "/opt/homebrew" ]]; then
+    export HOMEBREW_NO_ANALYTICS=1
+    export HOMEBREW_NO_ENV_HINTS=1
+fi
 
 [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
 # PATH
-export N_PREFIX="$HOME/.n"
-export PNPM_HOME="$HOME/Library/pnpm"
-export PYENV_ROOT="$HOME/.pyenv"
-export BUN_INSTALL="$HOME/.bun"
-export ZIGPATH="$HOME/Code/zig/build/stage3"
-
-path=(
-    "/opt/homebrew/opt/postgresql@18/bin"
+typeset -U path # Ensure unique entries automatically
+local path_candidates=(
+    "$HOME/.cargo/bin"
+    "$BUN_INSTALL/bin"
     "$N_PREFIX/bin"
-    "$PNPM_HOME"
     "$PYENV_ROOT/bin"
     "$HOME/.local/bin"
-    "$BUN_INSTALL/bin"
-    "/opt/homebrew/opt/llvm/bin"
     "$ZIGPATH/bin"
-    $path
 )
+
+# Only append if directory exists
+for p in "${path_candidates[@]}"; do
+    [[ -d "$p" ]] && path+=("$p")
+done
 export PATH
 
 # Tool init
 command -v pyenv >/dev/null && eval "$(pyenv init -)"
-[ -f "/Users/cal/.ghcup/env" ] && . "/Users/cal/.ghcup/env"
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+[ -f "$HOME/.deno/env" ] && . "$HOME/.deno/env"
 
 # Editor
 if [[ -n $SSH_CONNECTION ]]; then
@@ -108,17 +109,10 @@ gprn() {
 
 # Tools
 alias lg="lazygit"
-alias lzd="lazydocker"
-alias pn="pnpm"
 
 # Puzzle mode for nvim (disables completions)
 alias nvimpz="PUZZLE_MODE=1 nvim"
 
-# Config shortcuts
-alias zshcfg="nvim ~/.zshrc"
-alias vimcfg="nvim ~/.config/nvim/"
-alias gstcfg="nvim .config/ghostty/config"
-alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_sun.lua"
 alias dl="nvim ~/Documents/log/log_$(date +%Y_%m_%d).txt"
 
 # Kimi via Claude CLI
@@ -130,6 +124,4 @@ cckimi() {
     claude
 }
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(starship init zsh)"
-. "/Users/cal/.deno/env"
