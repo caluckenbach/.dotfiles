@@ -1,80 +1,58 @@
-# Oh My Zsh configuration
+# Deno completions
+if [[ ":$FPATH:" != *":/Users/cal/.zsh/completions:"* ]]; then export FPATH="/Users/cal/.zsh/completions:$FPATH"; fi
+
+# Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
 ZSH_THEME="robbyrussell"
 plugins=(git tmux zoxide poetry kubectl)
 source $ZSH/oh-my-zsh.sh
 
-# Environment variables
+# History
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY HIST_REDUCE_BLANKS
+
+# Environment
 export LANG=en_US.UTF-8
 export HOMEBREW_NO_ANALYTICS=1
 export HOMEBREW_NO_ENV_HINTS=1
 
-# Load private environment variables
-if [[ -f "$HOME/.zshrc.local" ]]; then
-    source "$HOME/.zshrc.local"
-fi
+[[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
 
-# Tool configuration and PATH management
+# PATH
 export N_PREFIX="$HOME/.n"
 export PNPM_HOME="$HOME/Library/pnpm"
 export PYENV_ROOT="$HOME/.pyenv"
 export BUN_INSTALL="$HOME/.bun"
-export GOPATH="$HOME/go"
-export GOROOT="$(brew --prefix golang)/libexec"
 export ZIGPATH="$HOME/Code/zig/build/stage3"
 
 path=(
+    "/opt/homebrew/opt/postgresql@18/bin"
     "$N_PREFIX/bin"
     "$PNPM_HOME"
     "$PYENV_ROOT/bin"
     "$HOME/.local/bin"
     "$BUN_INSTALL/bin"
     "/opt/homebrew/opt/llvm/bin"
-    "$GOPATH/bin"
     "$ZIGPATH/bin"
     $path
 )
 export PATH
 
-# Tool initialization
+# Tool init
 command -v pyenv >/dev/null && eval "$(pyenv init -)"
+[ -f "/Users/cal/.ghcup/env" ] && . "/Users/cal/.ghcup/env"
 
-# Editor configuration
+# Editor
 if [[ -n $SSH_CONNECTION ]]; then
     export EDITOR='vi'
 else
     export EDITOR='nvim'
 fi
 
-# ghcup
-[ -f "/Users/cal/.ghcup/env" ] && . "/Users/cal/.ghcup/env"
-# end ghcupt
-
-# fabric
-if [ -d "$HOME/.config/fabric/patterns" ]; then
-    for pattern_file in "$HOME/.config/fabric/patterns"/*; do
-        pattern_name=$(basename "$pattern_file")
-        alias "$pattern_name"="fabric --pattern $pattern_name"
-    done
-fi
-
-yt() {
-    local video_link="$1"
-    fabric -y "$video_link" --transcript
-}
-# fabric end
-
-# ngrok
-if command -v ngrok &>/dev/null; then
-    eval "$(ngrok completion)"
-  fi
-# ngrok end
-
-# uv
+# uv completions
 command -v uv >/dev/null && eval "$(uv generate-shell-completion zsh)"
 command -v uvx >/dev/null && eval "$(uvx --generate-shell-completion zsh)"
-
-# Fix completions for uv run to autocomplete .py files
 _uv_run_mod() {
     if [[ "$words[2]" == "run" && "$words[CURRENT]" != -* ]]; then
         _arguments '*:filename:_files -g "*.py"'
@@ -83,32 +61,30 @@ _uv_run_mod() {
     fi
 }
 compdef _uv_run_mod uv
-# uv end
 
-# yazi
-function y() {
-	local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
-	yazi "$@" --cwd-file="$tmp"
-	IFS= read -r -d '' cwd < "$tmp"
-	[ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
-	rm -f -- "$tmp"
+# yazi (cd to dir on exit)
+y() {
+    local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+    yazi "$@" --cwd-file="$tmp"
+    IFS= read -r -d '' cwd < "$tmp"
+    [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+    rm -f -- "$tmp"
 }
-# yazi end
 
-
-# File operation aliases
-alias ls="eza -F --group-directories-first --color=always --icons"
-alias la="eza -alF --group-directories-first --color=always --icons"
-alias ll="eza -lF --group-directories-first"
-alias lt="eza -aTF --level=2 --group-directories-first --icons --color=always"
-alias ldot='eza -a | rg "^\."'
+# File operations
+unalias ls la ll lt ldot 2>/dev/null
+ls() { eza -F --group-directories-first --color=always --icons "$@" }
+la() { eza -alF --group-directories-first --color=always --icons "$@" }
+ll() { eza -lF --group-directories-first "$@" }
+lt() { eza -aTF --level=2 --group-directories-first --icons --color=always "$@" }
+ldot() { eza -a | rg "^\." }
 alias cat="bat"
 alias grep="rg"
 alias cp="cp -i"
 alias mv="mv -i"
 alias rm="rm -i"
 
-# Git aliases
+# Git
 alias g="git"
 alias gp="git push"
 alias gpf="git push --force"
@@ -121,26 +97,31 @@ alias gsc="git switch -c"
 alias gco="git checkout"
 alias grb="git rebase"
 alias gcan="git commit --amend --no-edit"
-alias gprn="{ git fetch --all --prune && git branch -v | awk '/\[gone\]/ {print \$1}' | while read branch; do git branch -D \"\$branch\"; done; }"
 alias gsh="git show --ext-diff"
 alias gl="git log -p --ext-diff"
+gprn() {
+    git fetch --all --prune
+    git branch -v | awk '/\[gone\]/ {print $1}' | while read branch; do
+        git branch -D "$branch"
+    done
+}
 
-# Tool shortcuts
+# Tools
 alias lg="lazygit"
 alias lzd="lazydocker"
 alias pn="pnpm"
 
-# Configuration shortcuts
+# Puzzle mode for nvim (disables completions)
+alias nvimpz="PUZZLE_MODE=1 nvim"
+
+# Config shortcuts
 alias zshcfg="nvim ~/.zshrc"
 alias vimcfg="nvim ~/.config/nvim/"
 alias gstcfg="nvim .config/ghostty/config"
 alias theme="nvim +FormatDisable! +Lushify ~/Code/1980_sun/lua/lush_theme/1980_sun.lua"
-
-# Daily log shortcut
 alias dl="nvim ~/Documents/log/log_$(date +%Y_%m_%d).txt"
 
-
-# Coding agents
+# Kimi via Claude CLI
 cckimi() {
     export ANTHROPIC_BASE_URL=https://api.moonshot.ai/anthropic
     export ANTHROPIC_AUTH_TOKEN=${MOONSHOT_API_KEY}
@@ -149,5 +130,6 @@ cckimi() {
     claude
 }
 
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(starship init zsh)"
-
+. "/Users/cal/.deno/env"

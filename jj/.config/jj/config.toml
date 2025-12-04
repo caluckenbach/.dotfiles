@@ -8,3 +8,7 @@ email = "cluckenbach@protonmail.com"
 editor = "nvim"
 diff-formatter = ["difft", "--color=always", "$left", "$right"]
 diff-editor = ":builtin"
+
+[signing]
+behavior = "own"
+backend = "gpg"
