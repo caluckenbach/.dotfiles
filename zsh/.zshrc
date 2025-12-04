@@ -74,11 +74,11 @@ y() {
 
 # File operations
 unalias ls la ll lt ldot 2>/dev/null
-ls() { eza -F --group-directories-first --color=always --icons "$@" }
-la() { eza -alF --group-directories-first --color=always --icons "$@" }
-ll() { eza -lF --group-directories-first "$@" }
-lt() { eza -aTF --level=2 --group-directories-first --icons --color=always "$@" }
-ldot() { eza -a | rg "^\." }
+function ls() { eza -F --group-directories-first --color=always --icons "$@" }
+function la() { eza -alF --group-directories-first --color=always --icons "$@" }
+function ll() { eza -lF --group-directories-first "$@" }
+function lt() { eza -aTF --level=2 --group-directories-first --icons --color=always "$@" }
+function ldot() { eza -a | rg "^\." }
 alias cat="bat"
 alias grep="rg"
 alias cp="cp -i"
