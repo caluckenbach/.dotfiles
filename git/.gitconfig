@@ -1,0 +1,21 @@
+[user]
+	name = Constantin Luckenbach
+	email = cluckenbach@protonmail.com
+
+[core]
+	editor = nvim
+
+[init]
+	defaultBranch = main
+
+[diff]
+	external = difft
+
+[push]
+	autoSetupRemote = true
+
+[pull]
+	rebase = true
+
+[rebase]
+	autoStash = true

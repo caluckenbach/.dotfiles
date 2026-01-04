@@ -1,5 +1,5 @@
-# Deno completions
-if [[ ":$FPATH:" != *":/Users/cal/.zsh/completions:"* ]]; then export FPATH="/Users/cal/.zsh/completions:$FPATH"; fi
+# Completions
+export FPATH="$HOME/.zsh/completions:$HOME/.zfunc:$FPATH"
 
 # Oh My Zsh
 export ZSH="$HOME/.oh-my-zsh"
@@ -14,6 +14,7 @@ setopt HIST_IGNORE_DUPS HIST_IGNORE_SPACE SHARE_HISTORY HIST_REDUCE_BLANKS
 
 # Environment
 export LANG=en_US.UTF-8
+export N_PREFIX="$HOME/.n"
 
 if [[ -d "/opt/homebrew" ]]; then
     export HOMEBREW_NO_ANALYTICS=1
@@ -27,10 +28,12 @@ typeset -U path # Ensure unique entries automatically
 local path_candidates=(
     "$HOME/.cargo/bin"
     "$BUN_INSTALL/bin"
+    "$HOME/.bun/bin"
     "$N_PREFIX/bin"
     "$PYENV_ROOT/bin"
     "$HOME/.local/bin"
     "$ZIGPATH/bin"
+    "$HOME/.amp/bin"
 )
 
 # Only append if directory exists
@@ -107,6 +110,13 @@ gprn() {
     done
 }
 
+# Jujutsu
+alias jl="jj log"
+alias jd="jj diff"
+alias jn="jj new"
+alias js="jj status"
+alias jds="jj describe"
+
 # Tools
 alias lg="lazygit"
 
@@ -124,4 +134,11 @@ cckimi() {
     claude
 }
 
+
 eval "$(starship init zsh)"
+
+
+
+export STM32_PRG_PATH=/Applications/STMicroelectronics/STM32Cube/STM32CubeProgrammer/STM32CubeProgrammer.app/Contents/MacOs/bin
+
+export STM32CubeMX_PATH=/Applications/STMicroelectronics/STM32CubeMX.app/Contents/Resources
